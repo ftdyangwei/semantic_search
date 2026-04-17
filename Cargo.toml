@@ -36,6 +36,7 @@ ort = { version = "=2.0.0-rc.9", features = ["load-dynamic", "ndarray", "copy-dy
 tree-sitter = { version = "=0.25.9" }
 tree-sitter-typescript = { version = "=0.23.2" }
 tree-sitter-arkts = { path = "vendor/tree-sitter-arkts" }
+tree-sitter-cangjie = { git = "https://gitcode.com/2301_81676461/tree-sitter-cangjie" }
 log4rs = { version = "=1.3.0", features = ["all_components"] }
 
 rusqlite = { version = "=0.31.0", features = ["bundled"] }

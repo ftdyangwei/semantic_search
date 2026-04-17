@@ -7,6 +7,7 @@ use async_trait::async_trait;
 use crate::common::data::{Chunk, IndexType};
 use crate::document_chunker::file::FileChunker;
 use crate::document_chunker::symbol::arkts::ArkTsChunker;
+use crate::document_chunker::symbol::cangjie::CangjieChunker;
 use crate::document_chunker::symbol::ts::TsChunker;
 use crate::language::language::Language;
 
@@ -50,6 +51,13 @@ impl ChunkerRegistry {
             self.register(
                 ChunkerKey::Symbol(Language::Typescript),
                 Arc::new(ts_chunker),
+            );
+        }
+
+        if let Ok(cj_chunker) = CangjieChunker::new() {
+            self.register(
+                ChunkerKey::Symbol(Language::Cangjie),
+                Arc::new(cj_chunker),
             );
         }
     }
