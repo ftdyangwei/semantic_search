@@ -1,11 +1,10 @@
 use rmcp::{
-    model::{CallToolRequestParams, JsonObject},
+    model::{CallToolRequestParam, JsonObject},
     serve_client,
     service::QuitReason,
     transport::TokioChildProcess,
 };
-use std::thread::sleep;
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{fs, path::PathBuf};
 use vnext_semantic_search::{
     embedding::utils::EmbeddingModelType, resources::paths as resource_paths,
 };
@@ -74,13 +73,16 @@ async fn mcp_stdio_e2e_index_and_search() -> anyhow::Result<()> {
 
     let start_index_result = client
         .call_tool(
-            CallToolRequestParams::new("start_index").with_arguments(json_object(&[
-                ("layer", serde_json::json!("all")),
-                (
-                    "project",
-                    serde_json::json!(project_dir.to_string_lossy().to_string()),
-                ),
-            ])),
+            CallToolRequestParam {
+                name: "start_index".into(),
+                arguments: Some(json_object(&[
+                    ("layer", serde_json::json!("all")),
+                    (
+                        "project",
+                        serde_json::json!(project_dir.to_string_lossy().to_string()),
+                    ),
+                ])),
+            },
         )
         .await?;
 
@@ -94,16 +96,19 @@ async fn mcp_stdio_e2e_index_and_search() -> anyhow::Result<()> {
 
     let search_result = client
         .call_tool(
-            CallToolRequestParams::new("search").with_arguments(json_object(&[
-                ("query", serde_json::json!("hello")),
-                ("layer", serde_json::json!("file")),
-                ("limit", serde_json::json!(3)),
-                ("threshold", serde_json::json!(0.0)),
-                (
-                    "project",
-                    serde_json::json!(project_dir.to_string_lossy().to_string()),
-                ),
-            ])),
+            CallToolRequestParam {
+                name: "search".into(),
+                arguments: Some(json_object(&[
+                    ("query", serde_json::json!("hello")),
+                    ("layer", serde_json::json!("file")),
+                    ("limit", serde_json::json!(3)),
+                    ("threshold", serde_json::json!(0.0)),
+                    (
+                        "project",
+                        serde_json::json!(project_dir.to_string_lossy().to_string()),
+                    ),
+                ])),
+            },
         )
         .await?;
 
@@ -122,16 +127,19 @@ async fn mcp_stdio_e2e_index_and_search() -> anyhow::Result<()> {
 
     let search_b = client
         .call_tool(
-            CallToolRequestParams::new("search").with_arguments(json_object(&[
-                ("query", serde_json::json!("other_crate_fn")),
-                (
-                    "project",
-                    serde_json::json!(project_b.to_string_lossy().to_string()),
-                ),
-                ("layer", serde_json::json!("file")),
-                ("limit", serde_json::json!(3)),
-                ("threshold", serde_json::json!(0.0)),
-            ])),
+            CallToolRequestParam {
+                name: "search".into(),
+                arguments: Some(json_object(&[
+                    ("query", serde_json::json!("other_crate_fn")),
+                    (
+                        "project",
+                        serde_json::json!(project_b.to_string_lossy().to_string()),
+                    ),
+                    ("layer", serde_json::json!("file")),
+                    ("limit", serde_json::json!(3)),
+                    ("threshold", serde_json::json!(0.0)),
+                ])),
+            },
         )
         .await?;
     let search_b_json = extract_first_text_json(&search_b)
@@ -143,7 +151,8 @@ async fn mcp_stdio_e2e_index_and_search() -> anyhow::Result<()> {
     );
 
     // Graceful shutdown.
-    let _reason: QuitReason = client.close().await?;
+    // rmcp 0.12.x 的 `RunningService` 没有 `close()`；这里使用 cancel() 停止后台任务并回收子进程。
+    let _reason: QuitReason = client.cancel().await?;
 
     Ok(())
 }

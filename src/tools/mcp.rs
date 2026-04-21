@@ -375,12 +375,16 @@ impl SemanticSearchMcp {
 #[tool_handler]
 impl ServerHandler for SemanticSearchMcp {
     fn get_info(&self) -> ServerInfo {
-        ServerInfo::new(ServerCapabilities::builder().enable_tools().build())
-            .with_protocol_version(ProtocolVersion::V_2024_11_05)
-            .with_server_info(Implementation::from_build_env())
-            .with_instructions(
-                "Use `start_index` before `search` for a new repository. Pass optional `project` (absolute repo root) when working with multiple directories; otherwise the server reads SEMANTIC_SEARCH_PROJECT from the environment. For code questions (where/how/who calls what), prefer `search`. Searching during indexing may return partial results.",
-            )
+        // rmcp 0.12.x 中 `ServerInfo` 是 `InitializeResult` 的别名，没有 `new()/with_*()` 这些 builder API。
+        // 这里直接按协议结构体字段构造即可。
+        ServerInfo {
+            protocol_version: ProtocolVersion::V_2024_11_05,
+            capabilities: ServerCapabilities::builder().enable_tools().build(),
+            server_info: Implementation::from_build_env(),
+            instructions: Some(
+                "Use `start_index` before `search` for a new repository. Pass optional `project` (absolute repo root) when working with multiple directories; otherwise the server reads SEMANTIC_SEARCH_PROJECT from the environment. For code questions (where/how/who calls what), prefer `search`. Searching during indexing may return partial results.".to_string(),
+            ),
+        }
     }
 }
 
