@@ -5,9 +5,9 @@ use std::{
 };
 
 use async_trait::async_trait;
-use parking_lot::Mutex;
 use clap::ValueEnum;
 use ort::session::builder::GraphOptimizationLevel;
+use parking_lot::Mutex;
 use serde::Serialize;
 
 use crate::{
@@ -229,8 +229,9 @@ impl SemanticSearchBackend for ManagerBackend {
             s.cancel_token.clone()
         };
 
-        let progress_reporter: Arc<dyn ProgressReporter> =
-            Arc::new(SessionProgressReporter { session: self.session.clone() });
+        let progress_reporter: Arc<dyn ProgressReporter> = Arc::new(SessionProgressReporter {
+            session: self.session.clone(),
+        });
 
         let profiler = Arc::new(IndexProfiler::new(self.manager.storage_options()));
         prepare_profiler_for_selected_layers(&profiler, layers);
@@ -285,7 +286,8 @@ impl SemanticSearchBackend for ManagerBackend {
     ) -> anyhow::Result<Vec<QueryResult>> {
         let mut merged_results: Vec<QueryResult> = Vec::new();
         for layer in layers {
-            let mut results = self.manager
+            let mut results = self
+                .manager
                 .search(query, limit, threshold, *layer, paths.clone())
                 .await?;
             merged_results.append(&mut results);
@@ -335,7 +337,9 @@ pub async fn dispatch_execute_stop_index<B: SemanticSearchBackend + ?Sized>(
     Ok(CommandResponse::StopIndex(StopIndexResponse {
         project: request.project,
         status,
-        usage_hint: "You can restart with /start_index. Searching uses whatever has been indexed so far.".to_string(),
+        usage_hint:
+            "You can restart with /start_index. Searching uses whatever has been indexed so far."
+                .to_string(),
     }))
 }
 
@@ -355,7 +359,11 @@ pub async fn dispatch_execute_search<B: SemanticSearchBackend + ?Sized>(
         )
         .await?;
 
-    results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    results.sort_by(|a, b| {
+        b.score
+            .partial_cmp(&a.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     results.truncate(request.limit);
 
     let layer_label = match request.layer {
@@ -470,10 +478,18 @@ impl CommandResponse {
     pub fn render(&self, format: OutputFormat) -> anyhow::Result<String> {
         match format {
             OutputFormat::Json => match self {
-                Self::StartIndex(response) => serde_json::to_string_pretty(response).map_err(Into::into),
-                Self::IndexProgress(response) => serde_json::to_string_pretty(response).map_err(Into::into),
-                Self::StopIndex(response) => serde_json::to_string_pretty(response).map_err(Into::into),
-                Self::Search(response) => serde_json::to_string_pretty(response).map_err(Into::into),
+                Self::StartIndex(response) => {
+                    serde_json::to_string_pretty(response).map_err(Into::into)
+                }
+                Self::IndexProgress(response) => {
+                    serde_json::to_string_pretty(response).map_err(Into::into)
+                }
+                Self::StopIndex(response) => {
+                    serde_json::to_string_pretty(response).map_err(Into::into)
+                }
+                Self::Search(response) => {
+                    serde_json::to_string_pretty(response).map_err(Into::into)
+                }
             },
             OutputFormat::Text => Ok(match self {
                 Self::StartIndex(response) => format!(
@@ -495,9 +511,7 @@ impl CommandResponse {
                 ),
                 Self::StopIndex(response) => format!(
                     "Index stopped\nproject: {}\nstatus: {:?}\nnext: {}",
-                    response.project,
-                    response.status,
-                    response.usage_hint
+                    response.project, response.status, response.usage_hint
                 ),
                 Self::Search(response) => response.render_text(),
             }),

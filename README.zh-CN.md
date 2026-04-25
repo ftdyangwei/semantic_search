@@ -25,6 +25,32 @@ cargo build --release
 cargo test
 ```
 
+## 打包与发布（仅 `resources/`，三平台）
+
+如果你当前只需要发布运行时资源（模型/词表/onnxruntime 动态库等），可以把仓库根目录的 `resources/` 按平台拆分后上传到 GitHub Release。
+
+本项目运行时会优先从“可执行文件同级的 `resources/`”加载资源；你也可以通过环境变量 **`SEMANTIC_SEARCH_RESOURCES_DIR`** 指定资源目录（优先级最高）。
+
+### 本地打包 `resources/`（三平台）
+
+```bash
+bash scripts/package-resources-3platform.sh
+ls -lh dist/semantic-search-resources-*
+```
+
+产物：
+- `dist/semantic-search-resources-darwin-aarch64.tar.gz`
+- `dist/semantic-search-resources-darwin-x86_64.tar.gz`
+- `dist/semantic-search-resources-windows-x86_64.zip`
+
+### 上传到 GitHub Release
+
+前置：已安装并登录 GitHub CLI（`gh auth login`，或设置 `GH_TOKEN`）。
+
+```bash
+bash scripts/upload-resources-local.sh mcp-v0.1.0
+```
+
 代码格式化（不依赖 [cargo-make](https://github.com/sagiegurari/cargo-make)）：
 
 ```bash

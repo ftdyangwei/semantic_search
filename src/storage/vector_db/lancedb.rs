@@ -190,20 +190,12 @@ impl LancedbChunkStore {
         Ok(output)
     }
 
-    pub async fn delete_chunks_by_path(
-        &self,
-        file_path: &str,
-        layer: IndexType,
-    ) -> Result<()> {
+    pub async fn delete_chunks_by_path(&self, file_path: &str, layer: IndexType) -> Result<()> {
         self.delete_chunks_by_paths(vec![file_path.to_string()], layer)
             .await
     }
 
-    pub async fn delete_chunks_by_paths(
-        &self,
-        paths: Vec<String>,
-        layer: IndexType,
-    ) -> Result<()> {
+    pub async fn delete_chunks_by_paths(&self, paths: Vec<String>, layer: IndexType) -> Result<()> {
         if paths.is_empty() {
             return Ok(());
         }
@@ -299,13 +291,7 @@ mod tests {
             .await?;
 
         let results = db
-            .search(
-                vec![1.0, 0.0],
-                10,
-                0.0,
-                IndexType::File,
-                vec![],
-            )
+            .search(vec![1.0, 0.0], 10, 0.0, IndexType::File, vec![])
             .await?;
 
         assert_eq!(results.len(), 1);

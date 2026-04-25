@@ -56,9 +56,8 @@ impl StorageManager {
     }
 
     pub fn get_project_index_finished_time(&self) -> anyhow::Result<Option<u64>> {
-        let project_index_finished_time = self
-            .index_status_store
-            .get_project_index_finished_time()?;
+        let project_index_finished_time =
+            self.index_status_store.get_project_index_finished_time()?;
         Ok(project_index_finished_time)
     }
 
@@ -89,11 +88,7 @@ impl StorageManager {
         Ok(())
     }
 
-    pub fn delete_index_status(
-        &self,
-        file_path: &str,
-        layer: IndexType,
-    ) -> anyhow::Result<()> {
+    pub fn delete_index_status(&self, file_path: &str, layer: IndexType) -> anyhow::Result<()> {
         self.index_status_store
             .delete_index_status_by_path(file_path, layer)?;
         Ok(())
@@ -104,11 +99,7 @@ impl StorageManager {
         Ok(table)
     }
 
-    pub async fn append_chunks(
-        &self,
-        layer: IndexType,
-        chunks: Vec<Chunk>,
-    ) -> anyhow::Result<()> {
+    pub async fn append_chunks(&self, layer: IndexType, chunks: Vec<Chunk>) -> anyhow::Result<()> {
         self.chunk_store.append_chunks(layer, chunks).await?;
         Ok(())
     }
@@ -119,11 +110,7 @@ impl StorageManager {
         Ok(())
     }
 
-    pub async fn delete_chunks(
-        &self,
-        file_path: &str,
-        layer: IndexType,
-    ) -> anyhow::Result<()> {
+    pub async fn delete_chunks(&self, file_path: &str, layer: IndexType) -> anyhow::Result<()> {
         self.chunk_store
             .delete_chunks_by_path(file_path, layer)
             .await?;

@@ -9,17 +9,17 @@ name = "semantic-search"
 path = "src/main.rs"
 
 [dependencies]
-chrono = { version = "=0.4.39", features = ["serde", "wasmbind"] }
-lazy_static = { version = "=1.4.0" }
+chrono = { version = "0.4.39", features = ["serde", "wasmbind"] }
+lazy_static = { version = "1.4.0" }
 log = { version = "0.4.21", features = ["std"] }
-parking_lot = { version = "=0.12.3" }
-serde_json = { version = "=1.0.149",features = ["unbounded_depth"] }
-ignore = { version = "=0.4.22" }
+parking_lot = { version = "0.12.3" }
+serde_json = { version = "1.0.149",features = ["unbounded_depth"] }
+ignore = { version = "0.4.22" }
 
-async-trait = { version = "=0.1.89" }
-futures = { version = "=0.3.31" }
-anyhow = { version = "=1.0.86" }
-tokio = { version = "=1.49.0", features = [
+async-trait = { version = "0.1.89" }
+futures = { version = "0.3.31" }
+anyhow = { version = "1.0.86" }
+tokio = { version = "1.49.0", features = [
     "rt",
     "rt-multi-thread",
     "macros",
@@ -30,24 +30,26 @@ tokio = { version = "=1.49.0", features = [
     "tracing",
     "io-util"
 ]}
-tokenizers = { version = "=0.21.4", features = ["progressbar", "onig"] }
-ndarray = { version = "=0.16.1" }
-ort = { version = "=2.0.0-rc.9", features = ["load-dynamic", "ndarray", "copy-dylibs"]}
-tree-sitter = { version = "=0.25.9" }
-tree-sitter-typescript = { version = "=0.23.2" }
+tokenizers = { version = "0.21.4", features = ["progressbar", "onig"] }
+ndarray = { version = "0.16.1" }
+ort = { version = "2.0.0-rc.9", features = ["load-dynamic", "ndarray", "copy-dylibs"]}
+tree-sitter = { version = "0.25.9" }
+tree-sitter-typescript = { version = "0.23.2" }
 tree-sitter-arkts = { path = "vendor/tree-sitter-arkts" }
 tree-sitter-cangjie = { git = "https://gitcode.com/2301_81676461/tree-sitter-cangjie" }
-log4rs = { version = "=1.3.0", features = ["all_components"] }
+tree-sitter-c = { version = "0.23" }
+tree-sitter-cpp = { version = "0.23" }
+log4rs = { version = "1.3.0", features = ["all_components"] }
 
-rusqlite = { version = "=0.31.0", features = ["bundled"] }
-lancedb = { version = "=0.19.1" }
+rusqlite = { version = "0.31.0", features = ["bundled"] }
+lancedb = { version = "0.19.1" }
 ort-sys = { version = "=2.0.0-rc.9" }
-arrow-array = { version = "=54.2.1" }
-arrow-schema = { version = "=54.2.1" }
-lsp-types = { version = "=0.96.0", features = ["proposed"] }
-uuid = { version = "=1.15.0" }
-serde = { version = "=1.0.228", features = ["derive"] }
-sysinfo = { version = "=0.30" }
+arrow-array = { version = "54.2.1" }
+arrow-schema = { version = "54.2.1" }
+lsp-types = { version = "0.96.0", features = ["proposed"] }
+uuid = { version = "1.15.0" }
+serde = { version = "1.0.228", features = ["derive"] }
+sysinfo = { version = "0.30" }
 clap = { version = "4", features = ["derive", "env"] }
-rmcp = { version = "1.3.0", features = ["server", "client", "transport-io", "transport-child-process", "schemars"] }
+rmcp = { version = "0.12.0", features = ["server", "client", "transport-io", "transport-child-process", "schemars"] }
 dirs = { version = "5" }

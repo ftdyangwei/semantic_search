@@ -2,6 +2,8 @@
 
 pub mod arkts;
 pub mod cangjie;
+pub mod c;
+pub mod cpp;
 pub mod kind;
 pub mod pipeline;
 pub mod ts;

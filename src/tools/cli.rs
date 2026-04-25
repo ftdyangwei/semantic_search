@@ -3,16 +3,20 @@ use std::{fs, path::PathBuf};
 use clap::{Parser, Subcommand};
 use ort::session::builder::GraphOptimizationLevel;
 
+use crate::tools::service::{
+    CommandResponse, IndexProgressRequest, SemanticSearchBackend, StartIndexRequest,
+    StopIndexRequest, dispatch_execute_index_progress, dispatch_execute_search,
+    dispatch_execute_start_index, dispatch_execute_stop_index,
+};
 use crate::{
     common::logger::init_logger,
     embedding::utils::{EmbeddingOptions, OnnxRuntimeConfig},
     storage::manager::StorageOptions,
     tools::service::{
-        LayerSelector, ManagerBackend, ModelTypeArg, OutputFormat,
-        ResolvedConfig, SearchRequest, validate_project_exists,
+        LayerSelector, ManagerBackend, ModelTypeArg, OutputFormat, ResolvedConfig, SearchRequest,
+        validate_project_exists,
     },
 };
-use crate::tools::service::{dispatch_execute_index_progress, dispatch_execute_search, dispatch_execute_start_index, dispatch_execute_stop_index, CommandResponse, IndexProgressRequest, SemanticSearchBackend, StartIndexRequest, StopIndexRequest};
 
 #[derive(Debug, Parser)]
 #[command(name = "semantic-search")]
@@ -173,7 +177,9 @@ impl SharedArgs {
         let model_type: crate::embedding::utils::EmbeddingModelType = self.model_type.into();
         let runtime_path = match &self.onnx_runtime_path {
             Some(p) => p.to_string_lossy().to_string(),
-            None => crate::resources::paths::default_onnxruntime_path()?.to_string_lossy().to_string(),
+            None => crate::resources::paths::default_onnxruntime_path()?
+                .to_string_lossy()
+                .to_string(),
         };
 
         let model_path = match &self.model_path {
@@ -243,7 +249,6 @@ pub async fn run_cli(cli: Cli) -> anyhow::Result<String> {
     }
 }
 
-
 pub struct CommandHandler<B> {
     backend: B,
 }
@@ -269,7 +274,10 @@ impl<B: SemanticSearchBackend> CommandHandler<B> {
         dispatch_execute_index_progress(&self.backend, request).await
     }
 
-    pub async fn execute_stop_index(&self, request: StopIndexRequest) -> anyhow::Result<CommandResponse> {
+    pub async fn execute_stop_index(
+        &self,
+        request: StopIndexRequest,
+    ) -> anyhow::Result<CommandResponse> {
         dispatch_execute_stop_index(&self.backend, request).await
     }
 
@@ -281,14 +289,14 @@ impl<B: SemanticSearchBackend> CommandHandler<B> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use async_trait::async_trait;
-    use lsp_types::{Position, Range};
     use crate::{
         common::data::{IndexType, QueryResult},
         metrics::data::IndexMetrics,
         resources::data_dir,
         tools::service::{SearchRequest, SemanticSearchBackend},
     };
+    use async_trait::async_trait;
+    use lsp_types::{Position, Range};
 
     struct MockBackend {
         metrics: IndexMetrics,
@@ -316,9 +324,7 @@ mod tests {
             })
         }
 
-        async fn stop_indexing(
-            &self,
-        ) -> anyhow::Result<crate::tools::service::IndexRunStatus> {
+        async fn stop_indexing(&self) -> anyhow::Result<crate::tools::service::IndexRunStatus> {
             Ok(crate::tools::service::IndexRunStatus::Cancelled)
         }
 

@@ -251,11 +251,7 @@ impl IndexStatusStore {
         Ok(())
     }
 
-    pub fn delete_index_status_by_path(
-        &self,
-        file_path: &str,
-        layer: IndexType,
-    ) -> Result<()> {
+    pub fn delete_index_status_by_path(&self, file_path: &str, layer: IndexType) -> Result<()> {
         let conn = self.open()?;
         let mut stmt =
             conn.prepare("DELETE FROM index_status WHERE file_path = ?1 AND layer = ?2")?;
@@ -292,8 +288,12 @@ mod tests {
         let project_path2 = temp_dir().join("projects/hmosworld/commons/audioplayer");
         let store1 = setup_store();
         let store2 = setup_store();
-        let project1 = store1.get_or_create_project(&project_path1, "veso").unwrap();
-        let project2 = store2.get_or_create_project(&project_path2, "veso").unwrap();
+        let project1 = store1
+            .get_or_create_project(&project_path1, "veso")
+            .unwrap();
+        let project2 = store2
+            .get_or_create_project(&project_path2, "veso")
+            .unwrap();
         assert_eq!(project1.root_path, project_path1);
         assert_eq!(project2.root_path, project_path2);
         assert_eq!(project1.embedding_model, "veso");

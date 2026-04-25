@@ -129,6 +129,12 @@ pub fn node_display_name(node: Node<'_>, source: &str) -> String {
             return s;
         }
     }
+    // Many grammars (notably C/C++) nest the symbol name under `declarator`.
+    if let Some(d) = node.child_by_field_name("declarator") {
+        if let Some(s) = first_identifier_in_subtree(d, source) {
+            return s;
+        }
+    }
     let mut cursor = node.walk();
     for child in node.children(&mut cursor) {
         if child.kind() == "identifier" {
@@ -138,7 +144,29 @@ pub fn node_display_name(node: Node<'_>, source: &str) -> String {
             }
         }
     }
+    if let Some(s) = first_identifier_in_subtree(node, source) {
+        return s;
+    }
     "<anonymous>".to_string()
+}
+
+fn first_identifier_in_subtree(node: Node<'_>, source: &str) -> Option<String> {
+    let mut stack = vec![node];
+    while let Some(n) = stack.pop() {
+        if n.kind() == "identifier" {
+            let s = source[n.byte_range()].trim().to_string();
+            if !s.is_empty() {
+                return Some(s);
+            }
+        }
+        let mut cursor = n.walk();
+        // DFS: push children in reverse so earlier children are visited first.
+        let children: Vec<_> = n.children(&mut cursor).collect();
+        for child in children.into_iter().rev() {
+            stack.push(child);
+        }
+    }
+    None
 }
 
 fn is_empty_range(range: &LspRange) -> bool {

@@ -66,9 +66,7 @@ impl IndexManager {
         let curr_files_status =
             scan_project(project, layer, &self.file_checker, &self.file_service).await;
 
-        let prev_files_status = self
-            .storage_manager
-            .get_index_status_by_layer(layer)?;
+        let prev_files_status = self.storage_manager.get_index_status_by_layer(layer)?;
 
         let diff = calculate_diff(&curr_files_status, &prev_files_status);
 
@@ -101,11 +99,8 @@ impl IndexManager {
             project.root_path.display(),
             layer
         );
-        self.storage_manager
-            .delete_index_status_by_layer(layer)?;
-        self.storage_manager
-            .delete_layer_table(layer)
-            .await?;
+        self.storage_manager.delete_index_status_by_layer(layer)?;
+        self.storage_manager.delete_layer_table(layer).await?;
         log::info!(
             "deleted project {} from layer {}",
             project.root_path.display(),

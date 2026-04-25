@@ -12,7 +12,9 @@ use tokio::sync::Mutex;
 
 use crate::{
     embedding::utils::OnnxRuntimeConfig,
-    resources::project_paths::{normalize_project_root, platform_project_default_paths, project_path_key},
+    resources::project_paths::{
+        normalize_project_root, platform_project_default_paths, project_path_key,
+    },
     storage::manager::StorageOptions,
     tools::service::{ManagerBackend, OutputFormat, ResolvedConfig},
 };
@@ -98,10 +100,7 @@ pub struct RegistryCommandHandler {
 }
 
 impl RegistryCommandHandler {
-    pub fn new(
-        registry: Arc<ProjectRegistry>,
-        shared: Arc<McpSharedConfig>,
-    ) -> Self {
+    pub fn new(registry: Arc<ProjectRegistry>, shared: Arc<McpSharedConfig>) -> Self {
         Self { registry, shared }
     }
 }

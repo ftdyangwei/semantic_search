@@ -161,7 +161,7 @@ export class AudioPlayerService {
         let chunker = ArkTsChunker::new().expect("ArkTsChunker::new");
         let chunks = chunker.split(&path, "sample.ets").await.expect("split");
         assert!(!chunks.is_empty());
-        
+
         let chunks_gt = vec![
             "AudioPlayerStatus",
             "AudioPlayerService",
@@ -174,7 +174,6 @@ export class AudioPlayerService {
         for (chunk, chunk_gt) in chunks.iter().zip(chunks_gt.iter()) {
             assert_eq!(chunk.embedding_content, *chunk_gt);
         }
-
 
         fs::remove_dir_all(&dir).ok();
     }

@@ -8,6 +8,8 @@ use crate::common::data::{Chunk, IndexType};
 use crate::document_chunker::file::FileChunker;
 use crate::document_chunker::symbol::arkts::ArkTsChunker;
 use crate::document_chunker::symbol::cangjie::CangjieChunker;
+use crate::document_chunker::symbol::c::CChunker;
+use crate::document_chunker::symbol::cpp::CppChunker;
 use crate::document_chunker::symbol::ts::TsChunker;
 use crate::language::language::Language;
 
@@ -41,10 +43,7 @@ impl ChunkerRegistry {
     pub fn register_chunkers(&mut self) {
         self.register(ChunkerKey::File, Arc::new(FileChunker::new()));
         if let Ok(arkts_chunker) = ArkTsChunker::new() {
-            self.register(
-                ChunkerKey::Symbol(Language::Arkts),
-                Arc::new(arkts_chunker),
-            );
+            self.register(ChunkerKey::Symbol(Language::Arkts), Arc::new(arkts_chunker));
         }
 
         if let Ok(ts_chunker) = TsChunker::new() {
@@ -59,6 +58,14 @@ impl ChunkerRegistry {
                 ChunkerKey::Symbol(Language::Cangjie),
                 Arc::new(cj_chunker),
             );
+
+        if let Ok(c_chunker) = CChunker::new() {
+            self.register(ChunkerKey::Symbol(Language::C), Arc::new(c_chunker));
+        }
+
+        if let Ok(cpp_chunker) = CppChunker::new() {
+            self.register(ChunkerKey::Symbol(Language::Cpp), Arc::new(cpp_chunker));
+
         }
     }
 
